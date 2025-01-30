@@ -1,0 +1,7 @@
+# Dependências do Node.js
+node_modules/
+package-lock.json
+
+# Logs e arquivos temporários
+*.log
+.DS_Store
