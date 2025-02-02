@@ -31,7 +31,7 @@ app.set("views", "./views");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // Configuração de conexão
-const conexão = mysql.createConnection({
+const conexao = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "yuri170104",
@@ -39,7 +39,7 @@ const conexão = mysql.createConnection({
 });
 
 // Teste Conexão
-conexão.connect(function (erro) {
+conexao.connect(function (erro) {
   if (erro) throw erro;
   console.log("Conexão efetuada com sucesso!");
 });
@@ -55,14 +55,37 @@ app.get("/", function (req, res) {
 
 // Rota de Cadastro
 app.post("/cadastrar", function (req, res) {
-  // Pega todas as requisicoes/informacoes fornecidas no corpo da funcao
-  console.log(req.body);
-  console.log(req.files.imagem.name);
+  // Obter os dados que serão utilizados para o cadastro de produtos
+  //Nome do produto sendo armazenado na variável
+  let nome = req.body.nome;
+  // Valor do produto sendo armazenado na variável
+  let valor = req.body.valor;
+  // Imagem do produto sendo armazenado na variável
+  let imagem = req.files.imagem.name;
 
-  req.files.imagem.mv(__dirname + "/images/" + req.files.imagem.name);
-  // Fecha a resposta (não envia nada ao cliente, apenas finaliza)
-  // res.send() or res.json();
-  res.end();
+  // SQL
+  let sql = `INSERT INTO produtos (nome, valor, image) VALUES ('${nome}', ${valor}, '${imagem}')`;
+
+  // Executar comando SQL
+  conexao.query(sql, function (erro, retorno) {
+    // Caso ocorra algum erro
+    if (erro) throw erro;
+
+    // Caso ocorra o cadastro
+    req.files.imagem.mv(__dirname + "/images/" + req.files.imagem.name);
+    console.log(retorno);
+  });
+
+  // Retornar para a rota principal
+  res.redirect("/");
+
+  // Pega todas as requisicoes/informacoes fornecidas no corpo da funcao
+  // console.log(req.body);
+  // console.log(req.files.imagem.name);
+
+  // // Fecha a resposta (não envia nada ao cliente, apenas finaliza)
+  // // res.send() or res.json();
+  // res.end();
 });
 // Servidor
 app.listen(8080);
