@@ -22,6 +22,9 @@ app.use("/bootstrap", express.static("./node_modules/bootstrap/dist"));
 // Adicionar a pasta CSS
 app.use("/css", express.static("./css"));
 
+// Adicionar a pasta de imagens
+app.use("/images", express.static("./images"));
+
 // Configuração do express-handlebars
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
@@ -46,7 +49,12 @@ conexao.connect(function (erro) {
 
 // Rota Principal
 app.get("/", function (req, res) {
-  res.render("formulario");
+  // SQL
+  let sql = "SELECT * FROM produtos";
+  conexao.query(sql, function (erro, retorno) {
+    res.render("formulario", { produtos: retorno });
+  });
+
   // resposta para escrever
   // res.write("Utilizando o Nodemon");
   // Fechamento da resposta
